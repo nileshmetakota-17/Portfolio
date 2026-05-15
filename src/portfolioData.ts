@@ -61,7 +61,7 @@ export const portfolioData = {
       contactLabel: 'Contact Me',
       viewProjectsLabel: 'View Projects',
     },
-    typewriterPhrases: ['Machine Learning Engineer', 'Robotics ML', 'Full-Stack Builder'],
+    typewriterPhrases: ['ML Engineer ', 'Test Engineer ', 'Full-Stack Builder '],
   },
   stats: [
     { label: 'Experience Roles', value: '3', hint: 'ML + Testing + Web' },
