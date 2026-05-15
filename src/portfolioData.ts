@@ -156,7 +156,7 @@ export const portfolioData = {
         'Production-ready structure deployable to Vercel, Netlify, or GitHub Pages.',
       ],
       githubUrl: 'https://github.com/nileshmetakota-17/Portfolio',
-      liveUrl: '',
+      liveUrl: 'https://nilesh17.vercel.app',
     },
   ] satisfies Project[],
   education: [

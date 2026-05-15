@@ -3,11 +3,15 @@
 Personal portfolio website built with **React**, **TypeScript**, **Vite**, **Tailwind CSS**, and **Framer Motion**.  
 Designed to be recruiter-friendly, responsive, and easy to deploy on GitHub Pages, Vercel, or Netlify.
 
+**Live site:** [https://nilesh17.vercel.app](https://nilesh17.vercel.app)
+
 ---
 
 ## Live demo
 
-After deployment, your site will be available at your hosting URL (see [Deploy](#deploy) below).
+View the deployed portfolio here:
+
+**[https://nilesh17.vercel.app](https://nilesh17.vercel.app)**
 
 ---
 
@@ -251,6 +255,7 @@ For a user site (`YOUR_USERNAME.github.io` repo), use `base: '/'`.
 **Nilesh Kumar Metakota**  
 Junior ML Engineer · Pithapuram, India
 
+- Portfolio: [nilesh17.vercel.app](https://nilesh17.vercel.app)
 - GitHub: [@nileshmetakota-17](https://github.com/nileshmetakota-17)
 - LinkedIn: [Nilesh_Metakota](https://www.linkedin.com/in/Nilesh_Metakota)
 - Email: nilesh.metakota@gmail.com
