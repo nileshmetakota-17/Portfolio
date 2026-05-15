@@ -224,7 +224,7 @@ export default function App() {
                     </div>
                     <div className="h-1 w-1 rounded-full bg-white/20" />
                     <div className="text-sm text-white/65">
-                      Focus: <span className="text-white/80"> Robotics, AI, Training, Datasets, Optimization</span>
+                      Focus: <span className="text-white/80"> Robotics | AI | Training | Datasets | Optimization </span>
                     </div>
                   </div>
                 </Reveal>
