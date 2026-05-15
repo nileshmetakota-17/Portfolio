@@ -196,7 +196,7 @@ export default function App() {
                 <Reveal>
                   <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-xs font-semibold text-white/70 ring-1 ring-white/10">
                     <Sparkles className="h-4 w-4 text-[var(--accent)]" />
-                    ML Engineering | Robotics Automation | Full-Stack Mindset
+                    ML Engineering | Robotics Automation | Test Engineer | Full-Stack Mindset
                   </div>
                 </Reveal>
 
