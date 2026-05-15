@@ -65,7 +65,7 @@ export const portfolioData = {
   },
   stats: [
     { label: 'Experience Roles', value: '3', hint: 'ML + Testing + Web' },
-    { label: 'Projects Built', value: '2', hint: 'Portfolio + Fitoo' },
+    { label: 'Featured Project', value: '1', hint: 'AI Meal & Workout System' },
     { label: 'Certifications', value: '1', hint: 'Full-Stack Internship' },
     { label: 'Collaboration Style', value: 'Team', hint: 'Agile & cross-functional' },
   ],
@@ -144,19 +144,6 @@ export const portfolioData = {
       ],
       githubUrl: 'https://github.com/nileshmetakota-17/Fitoo-',
       liveUrl: '',
-    },
-    {
-      title: 'Personal Portfolio Website',
-      description:
-        'Recruiter-friendly portfolio showcasing skills, experience, projects, and contact — built with a modern dark UI, animations, and responsive layout.',
-      technologies: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'Framer Motion'],
-      features: [
-        'Sticky scroll-spy navigation, animated hero, skills bars, and timeline experience section.',
-        'Resume download (Nilesh_Metakota_resume.pdf), GitHub/LinkedIn links, and validated contact form.',
-        'Production-ready structure deployable to Vercel, Netlify, or GitHub Pages.',
-      ],
-      githubUrl: 'https://github.com/nileshmetakota-17/Portfolio',
-      liveUrl: 'https://nilesh17.vercel.app',
     },
   ] satisfies Project[],
   education: [
