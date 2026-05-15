@@ -547,7 +547,7 @@ export default function App() {
                 badge={
                   <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white/70 ring-1 ring-white/10">
                     <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent2)]" />
-                    {idx === 0 ? 'Featured' : 'Project'}
+                    {idx === 0 ? 'Featured' : p.title.includes('Portfolio') ? 'Portfolio' : 'Project'}
                   </div>
                 }
               />
