@@ -1,9 +1,6 @@
 import { motion } from 'framer-motion'
 import { portfolioData } from '../portfolioData'
 
-const linkBase =
-  'relative shrink-0 px-3 py-2 text-sm font-semibold text-white/70 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] rounded-xl whitespace-nowrap'
-
 export function NavBar({
   activeId,
   onNavigate,
@@ -38,13 +35,12 @@ export function NavBar({
             </motion.div>
           </button>
 
-          {/* Horizontally scrollable section links */}
-          <div
+          <motion.div
             className="nav-scroll min-w-0 flex-1 overflow-x-auto overscroll-x-contain"
             role="navigation"
             aria-label="Portfolio sections"
           >
-            <motion.div className="flex min-w-max items-center gap-0.5 px-1">
+            <div className="flex min-w-max items-center gap-1 px-1">
               {items.map((it) => {
                 const isActive = activeId === it.id
                 return (
@@ -52,18 +48,34 @@ export function NavBar({
                     key={it.id}
                     type="button"
                     onClick={() => onNavigate(it.id)}
-                    className={linkBase}
                     aria-current={isActive ? 'page' : undefined}
+                    className={[
+                      'relative shrink-0 rounded-xl px-3 py-2 text-sm font-semibold whitespace-nowrap transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+                      isActive
+                        ? 'text-white'
+                        : 'text-white/55 hover:bg-white/5 hover:text-white/85',
+                    ].join(' ')}
                   >
                     {isActive && (
-                      <span className="absolute inset-x-2 -top-1.5 h-1 rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent2)]" />
+                      <motion.span
+                        layoutId="nav-section-highlight"
+                        className="absolute inset-0 rounded-xl bg-gradient-to-r from-[var(--accent)]/25 to-[var(--accent2)]/25 ring-1 ring-[var(--accent)]/40 shadow-[0_0_20px_rgba(167,139,250,0.15)]"
+                        transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                      />
                     )}
-                    {it.label}
+                    <span className="relative z-10">{it.label}</span>
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-section-underline"
+                        className="absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent2)]"
+                        transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                      />
+                    )}
                   </button>
                 )
               })}
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         </nav>
       </motion.div>
     </header>

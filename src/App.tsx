@@ -101,7 +101,7 @@ export default function App() {
         const next = visible[0]?.target?.id
         if (next) setActiveId(next)
       },
-      { root: null, rootMargin: '-25% 0px -60% 0px', threshold: [0, 0.1, 0.2, 0.35, 0.5] },
+      { root: null, rootMargin: '-20% 0px -55% 0px', threshold: [0, 0.15, 0.3, 0.5, 0.65] },
     )
 
     elements.forEach((el) => observer.observe(el))
@@ -547,7 +547,7 @@ export default function App() {
                 badge={
                   <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white/70 ring-1 ring-white/10">
                     <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent2)]" />
-                    {idx === 0 ? 'Featured' : p.title.includes('Portfolio') ? 'Portfolio' : 'Project'}
+                    {idx === 0 ? 'Featured' : 'Project'}
                   </div>
                 }
               />
