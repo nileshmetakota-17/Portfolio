@@ -77,43 +77,91 @@ export default function App() {
 
   const [activeId, setActiveId] = useState('home')
 
+  const scrollOffset = 112 // matches scroll-mt-28 on sections
+
   const onNavigate = (id: string) => {
     const el = document.getElementById(id)
     if (!el) return
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     setActiveId(id)
+
+    if (id === 'contact') {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+      window.scrollTo({ top: Math.max(0, maxScroll), behavior: 'smooth' })
+    } else {
+      const top = el.getBoundingClientRect().top + window.scrollY - scrollOffset
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
+    }
+
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur()
+    }
   }
 
   useEffect(() => {
     const ids = sectionItems.map((s) => s.id)
-    const elements = ids
-      .map((id) => document.getElementById(id))
-      .filter((x): x is HTMLElement => Boolean(x))
 
-    if (elements.length === 0) return
+    const updateActiveSection = () => {
+      const navLine = scrollOffset + 24
+      const viewportHeight = window.innerHeight
+      const scrollY = window.scrollY
+      const maxScroll = document.documentElement.scrollHeight - viewportHeight
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0))
+      const contactEl = document.getElementById('contact')
+      if (contactEl) {
+        const contactTop = contactEl.getBoundingClientRect().top
+        if (scrollY >= maxScroll - 80 || contactTop <= viewportHeight * 0.45) {
+          setActiveId('contact')
+          return
+        }
+      }
 
-        const next = visible[0]?.target?.id
-        if (next) setActiveId(next)
-      },
-      { root: null, rootMargin: '-20% 0px -55% 0px', threshold: [0, 0.15, 0.3, 0.5, 0.65] },
-    )
+      let current = ids[0] ?? 'home'
+      let bestVisible = 0
 
-    elements.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, [sectionItems])
+      for (const id of ids) {
+        const el = document.getElementById(id)
+        if (!el) continue
+
+        const rect = el.getBoundingClientRect()
+        const visibleTop = Math.max(rect.top, navLine)
+        const visibleBottom = Math.min(rect.bottom, viewportHeight)
+        const visibleHeight = Math.max(0, visibleBottom - visibleTop)
+
+        if (visibleHeight > bestVisible) {
+          bestVisible = visibleHeight
+          current = id
+        }
+      }
+
+      setActiveId(current)
+    }
+
+    let ticking = false
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        updateActiveSection()
+        ticking = false
+      })
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    updateActiveSection()
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [sectionItems, scrollOffset])
 
   return (
     <div className="min-h-screen">
       <ScrollProgress />
       <NavBar activeId={activeId} onNavigate={onNavigate} items={sectionItems} />
 
-      <main className="mx-auto max-w-6xl px-4 pb-20 pt-10">
+      <main className="mx-auto max-w-6xl px-4 pb-32 pt-10">
         {/* HERO */}
         <section id="home" className="scroll-mt-28">
           <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/4 backdrop-blur-xl">
@@ -715,7 +763,7 @@ export default function App() {
         <Divider />
 
         {/* CONTACT */}
-        <section id="contact" className="scroll-mt-28">
+        <section id="contact" className="scroll-mt-28 min-h-[50vh] pb-8">
           <Reveal>
             <SectionHeader
               icon={<Mail className="h-5 w-5 text-[var(--accent)]" />}
