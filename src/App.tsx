@@ -29,7 +29,6 @@ import { GlassCard } from './components/common/GlassCard'
 import { Reveal } from './components/common/Reveal'
 import { Typewriter } from './components/common/Typewriter'
 import { AnimatedCounter } from './components/common/AnimatedCounter'
-import { SkillBar } from './components/common/SkillBar'
 import { TimelineCard } from './components/common/TimelineCard'
 import { ProjectCard } from './components/common/ProjectCard'
 
@@ -196,12 +195,12 @@ export default function App() {
                 <Reveal>
                   <div className="inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-xs font-semibold text-white/70 ring-1 ring-white/10">
                     <Sparkles className="h-4 w-4 text-[var(--accent)]" />
-                     AI | ML Engineering | Robotics Automation | Test Engineer | Full-Stack Mindset
+                     Robotics Software | Autonomous Navigation | Machine Learning
                   </div>
                 </Reveal>
 
                 <Reveal delayMs={80}>
-                  <h1 className="mt-5 flex flex-row flex-wrap items-baseline gap-x-3 gap-y-1 text-3xl font-extrabold leading-tight text-white sm:gap-x-4 sm:text-4xl md:text-5xl md:whitespace-nowrap">
+                  <h1 className="mt-5 flex flex-row flex-wrap items-baseline gap-x-3 gap-y-1 text-3xl font-extrabold leading-tight text-white sm:gap-x-4 sm:text-4xl md:text-5xl">
                     {portfolioData.nameParts.map((part, i) => (
                       <span
                         key={part}
@@ -224,7 +223,7 @@ export default function App() {
                     </div>
                     <div className="h-1 w-1 rounded-full bg-white/20" />
                     <div className="text-sm text-white/65">
-                      Focus: <span className="text-white/80"> Robotics | AI | Training | Datasets | Optimization </span>
+                      Focus: <span className="text-white/80"> ROS 2 | Nav2 | LiDAR | Sensor Fusion </span>
                     </div>
                   </div>
                 </Reveal>
@@ -334,9 +333,9 @@ export default function App() {
                           <Laptop className="h-5 w-5 text-[var(--accent)]" />
                         </div>
                         <div>
-                          <div className="text-sm font-bold text-white">Industry-ready mindset</div>
+                          <div className="text-sm font-bold text-white">Currently at Bhairav Robotics</div>
                           <div className="mt-1 text-sm leading-relaxed text-white/65">
-                            Focused on measurable improvements: reliable data pipelines, consistent evaluation, and deployment-safe ML workflows.
+                            Developing autonomous navigation with ROS 2, obstacle avoidance, and LiDAR, GPS, and camera integration.
                           </div>
                         </div>
                       </div>
@@ -356,7 +355,7 @@ export default function App() {
             <SectionHeader
               icon={<Sparkles className="h-5 w-5 text-[var(--accent2)]" />}
               title="About Me"
-              subtitle="Confident, recruiter-friendly, and built for real-world impact."
+              subtitle="From machine learning workflows to autonomous robot navigation."
             />
           </Reveal>
 
@@ -364,12 +363,12 @@ export default function App() {
             <Reveal className="lg:col-span-7" delayMs={60}>
               <GlassCard className="p-7">
                 <p className="text-sm leading-relaxed text-white/75">
-                  I’m an <span className="font-semibold text-white">{portfolioData.title}</span> with a strong foundation in ML model training,
-                  dataset preparation, and optimization. I’m currently focused on building reliable automation capabilities for robotics environments.
+                  I’m a <span className="font-semibold text-white">{portfolioData.title}</span> at Bhairav Robotics.
+                  I build point-to-point navigation workflows with ROS 2 and Nav2, integrating obstacle avoidance and sensor data for autonomous movement.
                 </p>
                 <p className="mt-4 text-sm leading-relaxed text-white/70">
-                  My goal is to grow into an industry Machine Learning Engineer role where I can ship trustworthy models, improve iteration speed with
-                  robust data pipelines, and deliver measurable outcomes in production systems.
+                  My background spans machine learning, system testing, and full-stack development. I’m also pursuing a B.Tech in Computer Science
+                  and Engineering at KITS, continuing to build on my experience in model training, data pipelines, and intelligent automation.
                 </p>
 
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -379,7 +378,7 @@ export default function App() {
                       Career goals
                     </div>
                     <div className="mt-2 text-sm text-white/65">
-                      Deliver robotics-ready ML that performs reliably in real environments.
+                      Develop intelligent automation and reliable autonomous navigation in real environments.
                     </div>
                   </div>
                   <div className="rounded-2xl bg-white/4 p-4 ring-1 ring-white/10">
@@ -388,7 +387,7 @@ export default function App() {
                       Strengths
                     </div>
                     <div className="mt-2 text-sm text-white/65">
-                      Training workflows, dataset handling, evaluation, and performance optimization.
+                      ROS 2 navigation, sensor integration, training workflows, and model evaluation.
                     </div>
                   </div>
                   <div className="rounded-2xl bg-white/4 p-4 ring-1 ring-white/10">
@@ -422,7 +421,7 @@ export default function App() {
                   <div>
                     <div className="text-sm font-bold text-white">What I bring</div>
                     <div className="mt-1 text-sm text-white/65">
-                      A practical blend of ML engineering and full-stack fundamentals.
+                      Hands-on robotics development backed by ML engineering and full-stack fundamentals.
                     </div>
                   </div>
                 </div>
@@ -430,11 +429,11 @@ export default function App() {
                 <div className="mt-6 space-y-4">
                   <div>
                     <div className="flex items-center justify-between text-sm font-semibold text-white">
-                      <span>Model Lifecycle</span>
-                      <span className="text-white/55">train &rarr; eval &rarr; tune</span>
+                      <span>Robot Navigation</span>
+                      <span className="text-white/55">plan &rarr; move &rarr; avoid</span>
                     </div>
                     <div className="mt-2 h-2 rounded-full bg-white/5 ring-1 ring-white/10 overflow-hidden">
-                      <div className="h-full w-[82%] rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent2)]" />
+                      <div className="h-full w-full rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent2)]" />
                     </div>
                   </div>
                   <div>
@@ -443,16 +442,16 @@ export default function App() {
                       <span className="text-white/55">prep &rarr; label &rarr; optimize</span>
                     </div>
                     <div className="mt-2 h-2 rounded-full bg-white/5 ring-1 ring-white/10 overflow-hidden">
-                      <div className="h-full w-[76%] rounded-full bg-gradient-to-r from-[var(--accent2)] to-[var(--accent)]" />
+                      <div className="h-full w-full rounded-full bg-gradient-to-r from-[var(--accent2)] to-[var(--accent)]" />
                     </div>
                   </div>
                   <div>
                     <div className="flex items-center justify-between text-sm font-semibold text-white">
                       <span>Delivery Mindset</span>
-                      <span className="text-white/55">deploy-safe workflows</span>
+                      <span className="text-white/55">test &rarr; debug &rarr; integrate</span>
                     </div>
                     <div className="mt-2 h-2 rounded-full bg-white/5 ring-1 ring-white/10 overflow-hidden">
-                      <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent2)]" />
+                      <div className="h-full w-full rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent2)]" />
                     </div>
                   </div>
                 </div>
@@ -469,7 +468,7 @@ export default function App() {
             <SectionHeader
               icon={<Code2 className="h-5 w-5 text-[var(--accent)]" />}
               title="Skills"
-              subtitle="Structured, categorized, and designed to be recruiter-scannable."
+              subtitle="Tools and capabilities I use across robotics, ML, and application development."
             />
           </Reveal>
 
@@ -498,16 +497,19 @@ export default function App() {
               <GlassCard className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-bold text-white">Strength Areas</div>
-                    <div className="mt-1 text-sm text-white/65">Animated progress for key capabilities</div>
+                    <div className="text-sm font-bold text-white">Practical Focus</div>
+                    <div className="mt-1 text-sm text-white/65">Capabilities developed through projects and professional experience.</div>
                   </div>
                   <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-white/5 ring-1 ring-white/10">
                     <Sparkles className="h-5 w-5 text-[var(--accent2)]" />
                   </div>
                 </div>
                 <div className="mt-5 space-y-5">
-                  {portfolioData.skills.progress.map((s) => (
-                    <SkillBar key={s.label} label={s.label} value={s.value} />
+                  {portfolioData.skills.focus.map((s) => (
+                    <div key={s.label} className="border-l-2 border-[var(--accent)] pl-4">
+                      <div className="text-sm font-semibold text-white">{s.label}</div>
+                      <p className="mt-1 text-sm leading-relaxed text-white/65">{s.detail}</p>
+                    </div>
                   ))}
                 </div>
               </GlassCard>
@@ -543,7 +545,7 @@ export default function App() {
             <SectionHeader
               icon={<Briefcase className="h-5 w-5 text-[var(--accent2)]" />}
               title="Experience"
-              subtitle="Timeline highlights with recruiter-focused responsibilities."
+              subtitle="My progression through web development, testing, ML, and robotics software."
             />
           </Reveal>
 
@@ -578,7 +580,7 @@ export default function App() {
             <SectionHeader
               icon={<Laptop className="h-5 w-5 text-[var(--accent)]" />}
               title="Projects"
-              subtitle="Production-grade presentation with premium project cards."
+              subtitle="Autonomous robot navigation and AI-powered fitness assistance."
             />
           </Reveal>
 
@@ -603,7 +605,7 @@ export default function App() {
           </div>
 
           <div className="mt-6 text-sm text-white/60">
-            Want more projects showcased? Add links and screenshots and I’ll upgrade the grid layout to match.
+            Explore the repositories for source code and implementation details.
           </div>
         </section>
 
@@ -615,7 +617,7 @@ export default function App() {
             <SectionHeader
               icon={<GraduationCap className="h-5 w-5 text-[var(--accent2)]" />}
               title="Education"
-              subtitle="Clear and recruiter-friendly academic timeline."
+              subtitle="My academic foundation in computer engineering and computer science."
             />
           </Reveal>
 
@@ -655,7 +657,7 @@ export default function App() {
             <SectionHeader
               icon={<BadgeCheck className="h-5 w-5 text-[var(--accent)]" />}
               title="Certifications"
-              subtitle="Credential cards with clear issuing organization and date."
+              subtitle="Completed training and internship credentials."
             />
           </Reveal>
 
@@ -685,9 +687,7 @@ export default function App() {
                       <Button href={c.credentialUrl} variant="secondary" className="px-4">
                         Credential Link
                       </Button>
-                    ) : (
-                      <span className="text-sm text-white/55">Credential link: available soon</span>
-                    )}
+                    ) : null}
                   </div>
                 </GlassCard>
               </Reveal>
@@ -703,7 +703,7 @@ export default function App() {
             <SectionHeader
               icon={<Award className="h-5 w-5 text-[var(--accent2)]" />}
               title="Achievements"
-              subtitle="Impact-focused highlights tailored for hiring managers."
+              subtitle="Highlights from my robotics, machine learning, and web development work."
             />
           </Reveal>
 
@@ -889,8 +889,8 @@ function ContactForm() {
     }
 
     const subject = `Portfolio inquiry from ${fullName}`
-    const body = `Hi Nilesh,%0D%0A%0D%0A${message}%0D%0A%0D%0AFrom: ${fullName}%0D%0AEmail: ${email}%0D%0A`
-    window.location.href = `mailto:${portfolioData.email}?subject=${encodeURIComponent(subject)}&body=${body}`
+    const body = `Hi Nilesh,\r\n\r\n${message}\r\n\r\nFrom: ${fullName}\r\nEmail: ${email}\r\n`
+    window.location.href = `mailto:${portfolioData.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
     setStatus('sent')
   }
 
@@ -900,7 +900,7 @@ function ContactForm() {
         <div>
           <div className="text-sm font-bold text-white">Contact form</div>
           <div className="mt-1 text-sm text-white/65">
-            Uses mailto fallback (client-side) and includes validation for recruiter-ready outreach.
+            Share a role, project, or collaboration idea. This form opens a draft in your email app.
           </div>
         </div>
         <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white/5 ring-1 ring-white/10">
@@ -911,7 +911,6 @@ function ContactForm() {
       <form
         className="mt-6 space-y-4"
         onSubmit={onSubmit}
-        data-netlify="true"
         name="contact"
         method="post"
       >
@@ -939,6 +938,7 @@ function ContactForm() {
               autoComplete="email"
               required
               inputMode="email"
+              type="email"
             />
             {errors.email ? <div className="mt-1 text-xs text-rose-300">{errors.email}</div> : null}
           </label>
@@ -968,7 +968,7 @@ function ContactForm() {
           </div>
 
           <Button type="submit" variant="primary" icon={<ArrowRight className="h-4 w-4" />}>
-            Send Message
+            Open Email Draft
           </Button>
         </div>
       </form>

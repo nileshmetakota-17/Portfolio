@@ -36,7 +36,7 @@ export const portfolioData = {
   /** First / middle / last — shown horizontally in hero */
   nameParts: ['Nilesh', 'Kumar', 'Metakota'] as const,
   shortName: 'Nilesh Kumar Metakota',
-  title: 'Junior ML Engineer',
+  title: 'Robotics Software Engineer',
   location: 'Pithapuram, India',
   email: 'nilesh.metakota@gmail.com',
   phone: '+91 8309854539',
@@ -44,34 +44,38 @@ export const portfolioData = {
   linkedinHandle: 'Nilesh_Metakota',
   links: {
     github: 'https://github.com/nileshmetakota-17',
-    linkedin: 'https://www.linkedin.com/in/Nilesh_Metakota',
+    linkedin: 'https://www.linkedin.com/in/nilesh-kumar-metakota-4ab347335',
   },
   resume: {
-    path: '/Nilesh_Metakota_resume.pdf',
-    downloadName: 'Nilesh_Metakota_resume.pdf',
+    path: '/Nilesh_Metakota_2026.pdf',
+    downloadName: 'Nilesh_Metakota_2026.pdf',
   },
   hero: {
-    tagline: 'Building scalable digital experiences with modern technologies.',
+    tagline: 'Building autonomous robots that navigate the real world.',
     intro: [
-      'Aspiring Machine Learning Engineer with hands-on robotics internship experience.',
-      'Focused on model training, dataset preparation, and optimization to deliver reliable automation.',
+      'Robotics Software Engineer at Bhairav Robotics, working with ROS 2, Nav2, and LiDAR-based navigation.',
+      'Combining autonomous navigation, sensor integration, and machine learning to build reliable automation.',
     ],
     cta: {
       downloadResumeLabel: 'Download Resume',
       contactLabel: 'Contact Me',
       viewProjectsLabel: 'View Projects',
     },
-    typewriterPhrases: ['ML Engineer..', 'Test Engineer..', 'Full-Stack Builder..'],
+    typewriterPhrases: ['Autonomous Navigation', 'Robotics Software', 'Machine Learning', 'AI-powered Applications'],
   },
   stats: [
-    { label: 'Experience Roles', value: '3', hint: 'ML + Testing + Web' },
-    { label: 'Featured Project', value: '1', hint: 'AI Meal & Workout System' },
+    { label: 'Experience Roles', value: '4', hint: 'Robotics, ML, testing & web' },
+    { label: 'Featured Projects', value: '2', hint: 'Autonomous navigation & Fitoo' },
     { label: 'Certifications', value: '1', hint: 'Full-Stack Internship' },
     { label: 'Collaboration Style', value: 'Team', hint: 'Agile & cross-functional' },
   ],
   skills: {
     technical: [
       { category: 'Programming Languages', items: ['Python', 'C++'] },
+      {
+        category: 'Robotics & Navigation',
+        items: ['ROS 2', 'Nav2', 'LiDAR Navigation', 'Point-to-Point Navigation', 'Autonomous Navigation', 'Obstacle Avoidance'],
+      },
       {
         category: 'Web Development',
         items: ['HTML', 'CSS', 'JavaScript', 'Git & GitHub', 'Visual Studio Code'],
@@ -80,32 +84,43 @@ export const portfolioData = {
         category: 'Machine Learning',
         items: ['Model Training', 'Dataset Preparation', 'Evaluation', 'Optimization'],
       },
-      { category: 'Tooling / Platforms', items: ['GitHub', 'VS Code'] },
+      { category: 'Sensor Integration', items: ['LiDAR', 'GPS', 'Camera Integration', 'Sensor Fusion'] },
     ],
     professional: [
       { category: 'Professional Skills', items: ['Problem-Solving', 'Teamwork', 'Adaptability', 'Communication'] },
       { category: 'Languages', items: ['Telugu (Native)', 'English (Fluent)', 'Hindi (Proficient)'] },
     ],
-    progress: [
-      { label: 'Model Training', value: 78 },
-      { label: 'Dataset Preparation', value: 74 },
-      { label: 'Evaluation & Optimization', value: 70 },
-      { label: 'Python', value: 76 },
-      { label: 'Web Fundamentals', value: 68 },
-      { label: 'Team Collaboration', value: 72 },
+    focus: [
+      { label: 'Autonomous navigation', detail: 'ROS 2 / Nav2 workflows for movement between target locations.' },
+      { label: 'Environmental awareness', detail: 'Obstacle detection and avoidance with LiDAR, GPS, and camera integration.' },
+      { label: 'Machine learning workflows', detail: 'Dataset preparation, model training, evaluation, and optimization.' },
+      { label: 'Application development', detail: 'Responsive interfaces, API integration, and AI-assisted features.' },
     ],
   },
   experience: [
     {
+      role: 'Robotics Software Engineer',
+      company: 'Bhairav Robotics Pvt. Ltd.',
+      start: '05/2026',
+      end: 'Present',
+      bullets: [
+        'Develop point-to-point navigation capabilities using the ROS 2 navigation stack.',
+        'Implement autonomous workflows to move robots between predefined target locations.',
+        'Integrate obstacle detection and avoidance for safe autonomous navigation.',
+        'Work with LiDAR, GPS, and camera data for sensor fusion, localization, and navigation.',
+        'Integrate navigation components to improve path planning and autonomous movement.',
+      ],
+    },
+    {
       role: 'Junior ML Engineer',
       company: 'Bhairav Robotics Pvt. Ltd.',
       start: '07/2025',
-      end: 'Present',
+      end: '04/2026',
       bullets: [
-        'Collaborate with cross-functional teams to build and deploy ML models for robotics and automation systems.',
-        'Prepare, preprocess, and label datasets to enhance model accuracy and performance.',
-        'Develop and optimize data pipelines for efficient training, validation, and deployment workflows.',
-        'Perform continuous monitoring, evaluation, and fine-tuning to improve precision, reliability, and response times.',
+        'Collaborated with cross-functional teams to build and deploy ML models for robotics and automation systems.',
+        'Prepared, preprocessed, and labeled datasets to enhance model accuracy and performance.',
+        'Developed and optimized data pipelines for efficient training, validation, and deployment workflows.',
+        'Performed continuous monitoring, evaluation, and fine-tuning to improve precision, reliability, and response times.',
       ],
     },
     {
@@ -114,9 +129,9 @@ export const portfolioData = {
       start: '03/2025',
       end: '06/2025',
       bullets: [
-        'Assist in testing and validating ML and automation systems to improve system reliability.',
-        'Support debugging, performance analysis, and evaluation workflows for AI model testing.',
-        'Collaborate during development and deployment to ensure smooth integration.',
+        'Assisted in testing and validating ML and automation systems to improve system reliability.',
+        'Supported debugging, performance analysis, and evaluation workflows for AI model testing.',
+        'Collaborated during development and deployment to ensure smooth integration.',
       ],
     },
     {
@@ -125,13 +140,25 @@ export const portfolioData = {
       start: '11/2024',
       end: '05/2025',
       bullets: [
-        'Develop project-based full-stack web applications using HTML, CSS, JavaScript, and modern frameworks.',
-        'Design and deploy responsive, user-friendly interfaces with a focus on UX.',
-        'Work in agile sprints to debug, test, and integrate new features.',
+        'Developed project-based full-stack web applications using HTML, CSS, JavaScript, and modern frameworks.',
+        'Designed and deployed responsive, user-friendly interfaces with a focus on UX.',
+        'Worked in agile sprints to debug, test, and integrate new features.',
       ],
     },
   ] satisfies Experience[],
   projects: [
+    {
+      title: 'LiDAR-Based Autonomous Navigation',
+      description: 'A ROS 2 navigation system for autonomous robot movement between target locations, with obstacle avoidance and sensor integration.',
+      technologies: ['ROS 2', 'Nav2', 'LiDAR', 'GPS', 'Camera Integration'],
+      features: [
+        'Point-to-point navigation between predefined target locations using the ROS 2 navigation stack.',
+        'Obstacle detection and avoidance, with team collaboration on GPS and camera integration.',
+        'Navigation testing and debugging to improve movement reliability and environmental awareness.',
+      ],
+      githubUrl: 'https://github.com/nileshmetakota-17/Lidar_navigation',
+      liveUrl: '',
+    },
     {
       title: 'Fitoo – AI Integrated Meal & Workout Management System',
       description:
@@ -178,6 +205,10 @@ export const portfolioData = {
     },
   ] satisfies Certification[],
   achievements: [
+    {
+      title: 'Autonomous navigation development',
+      description: 'Developed ROS 2 navigation workflows with point-to-point movement, obstacle avoidance, and LiDAR, GPS, and camera integration.',
+    },
     {
       title: 'Robotics ML integration (real-world impact)',
       description:
