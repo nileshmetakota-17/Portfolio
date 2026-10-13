@@ -113,13 +113,10 @@ html.theme-smoothing body, html.theme-smoothing .site-header, html.theme-smoothi
 @keyframes status-pulse { 50% { box-shadow: 0 0 0 5px #b8efbf10, 0 0 16px #b8efbf60; } }
 .cover-footer a svg { animation: scroll-hint 2s ease-in-out infinite; }
 @keyframes scroll-hint { 50% { transform: translateY(5px); } }
-.route-traveler { offset-path: path('M145 475H245Q270 475 270 445V360Q270 320 310 320H330Q355 320 355 295V265Q355 240 380 240H480V135'); animation: travel-route 9s ease-in-out infinite; filter: drop-shadow(0 0 5px #b8efbf); }
-@keyframes travel-route { 0% { offset-distance: 0%; opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
-.scroll-reveal { opacity: 0; transform: translateY(30px); transition: opacity .85s ease, transform .85s cubic-bezier(.16, 1, .3, 1); }
-.scroll-reveal.revealed { opacity: 1; transform: translateY(0); }
-.project-copy.scroll-reveal { transition-delay: .12s; }
-.skills-grid > div:nth-child(3n + 2), .education-grid article:nth-child(2), .highlights-grid article:nth-child(3n + 2) { transition-delay: .08s; }
-.skills-grid > div:nth-child(3n + 3), .education-grid article:nth-child(3), .highlights-grid article:nth-child(3n + 3) { transition-delay: .16s; }
+.navigation-car { filter: drop-shadow(0 3px 4px #08110d80); }
+.scroll-reveal { opacity: 1; transform: none; }
+.scroll-reveal.revealed { animation: content-arrival .65s cubic-bezier(.16, 1, .3, 1); }
+@keyframes content-arrival { from { opacity: .5; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 .fitness-window { animation: fitness-float 7s ease-in-out infinite; }
 @keyframes fitness-float { 0%, 100% { transform: rotate(-4deg) translateY(0); } 50% { transform: rotate(-1deg) translateY(-9px); } }
 .fitness-ring { animation: fitness-ring-turn 10s ease-in-out infinite; }
@@ -132,4 +129,50 @@ html.theme-smoothing body, html.theme-smoothing .site-header, html.theme-smoothi
 .tag-list span { transition: color .2s, border-color .2s, transform .2s; }
 @media (hover: hover) { .tag-list span:hover { color: var(--text); border-color: var(--pink); transform: translateY(-3px); }.project-art .navigation-art { transition: transform .6s ease; }.project-art:hover .navigation-art { transform: scale(1.035); }.monogram { transition: transform .25s; }.brand:hover .monogram, .site-footer .monogram:hover { transform: rotate(-8deg); } }
 @media (max-width: 700px) { :root[data-theme='light'] .hero-art { opacity: .55; } }
+/* Content stays visible without animation support and can grow with text zoom. */
+.hero-cover { height: auto; min-height: 850px; min-height: max(850px, 100svh); max-height: none; }
+.hero-content { height: auto; min-height: inherit; }
+.project-row > *, .about-grid > *, .contact-grid > *, .skills-grid > *, .education-grid > *, .highlights-grid > *, .form-row > *, .experience-row > *, .certificate-row > * { min-width: 0; }
+.project-copy, .about-story, .experience-row, .education-grid, .highlights-grid, .contact-grid, .certificate-row { overflow-wrap: anywhere; }
+.hero-actions, .about-links { flex-wrap: wrap; }
+.icon-button { flex-shrink: 0; }
+.contact-form input, .contact-form textarea { font-size: 16px; }
+.hero-content .eyebrow { line-height: 1.6; }
+.navigation-art { max-width: 100%; }
+.project-art.fitness-project { aspect-ratio: auto; }
+.fitness-art { height: auto; min-height: 420px; }
+@media (max-width: 900px) {
+  .site-header { height: 70px; padding: 0 6%; gap: 10px; }
+  .brand { font-size: 12px; gap: 10px; }
+  .menu-toggle { display: grid; margin-left: auto; }
+  .icon-button { width: 44px; height: 44px; }
+  .header-nav { display: none; position: absolute; top: 70px; left: 0; right: 0; padding: 20px 6%; background: var(--bg); color: var(--text); border-bottom: 1px solid var(--line); max-height: calc(100vh - 70px); max-height: calc(100dvh - 70px); overflow-y: auto; }
+  .header-nav.open { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
+  .header-nav > a:not(.pill-button) { padding: 12px 0; }
+  .on-cover .header-nav .pill-button { background: var(--text); color: var(--bg); }
+  .hero-cover { min-height: 800px; min-height: max(800px, 100svh); }
+  .project-row { grid-template-columns: 1fr; }
+  .project-art { aspect-ratio: 1.25; }
+  .project-art.fitness-project { min-height: 400px; }
+  .fitness-window { max-width: 400px; }
+  .brand { min-width: 0; white-space: normal; }
+  .brand > span:last-child { overflow-wrap: anywhere; }
+}
+@media (max-width: 700px) {
+  .hero-cover { min-height: 740px; min-height: max(740px, 100svh); }
+  .project-art.fitness-project { min-height: 380px; aspect-ratio: auto; }
+  .fitness-art { padding: 30px 24px 38px; }
+  .fitness-window { padding: 24px 20px; }
+  .fitness-top > span:last-child { font-size: 6px; }
+  .contact-form .form-row { grid-template-columns: 1fr; gap: 0; }
+  .email-link { max-width: 100%; flex-wrap: wrap; }
+}
+@media (max-width: 360px) {
+  .brand { font-size: 11px; gap: 7px; }
+  .site-header { gap: 4px; }
+  h1 { font-size: 12vw; }
+  .skills-grid, .highlights-grid { grid-template-columns: 1fr; }
+  .subsection-heading { flex-wrap: wrap; }
+  .subsection-heading > span { max-width: none; text-align: left; }
+}
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; }*, *::before, *::after { animation: none !important; transition: none !important; }.scroll-reveal { opacity: 1; transform: none; }.route-traveler { offset-distance: 50%; }.hero-content > * { opacity: 1; transform: none; } }
