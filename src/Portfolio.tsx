@@ -136,7 +136,6 @@ export default function Portfolio() {
     try { localStorage.setItem('nilesh-theme', theme) } catch { /* Theme works without storage. */ }
   }, [theme])
   useEffect(() => {
-    if (typeof window.IntersectionObserver !== 'function') return
     const observer = new IntersectionObserver(entries => {
       for (const entry of entries) if (entry.isIntersecting) setActive(entry.target.id)
     }, { rootMargin: '-20% 0px -55% 0px' })
@@ -148,7 +147,6 @@ export default function Portfolio() {
       '.section-intro, .project-art, .project-copy, .about-story, .about-notes > div, .skills-grid > div, .experience-row, .education-grid article, .certificate-row, .highlights-grid article, .contact-section > .display-title, .contact-grid > div, .contact-form',
     )
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)')
-    if (typeof window.IntersectionObserver !== 'function') return
     const observer = new IntersectionObserver(entries => {
       for (const entry of entries) {
         if (entry.isIntersecting) {
@@ -156,7 +154,7 @@ export default function Portfolio() {
           observer.unobserve(entry.target)
         }
       }
-    }, { threshold: 0 })
+    }, { threshold: 0.08 })
     elements.forEach(element => {
       element.classList.add('scroll-reveal')
       if (preference.matches) element.classList.add('revealed')
@@ -165,10 +163,10 @@ export default function Portfolio() {
     const showContent = () => {
       if (preference.matches) elements.forEach(element => element.classList.add('revealed'))
     }
-    preference.addEventListener?.('change', showContent)
+    preference.addEventListener('change', showContent)
     return () => {
       observer.disconnect()
-      preference.removeEventListener?.('change', showContent)
+      preference.removeEventListener('change', showContent)
       elements.forEach(element => element.classList.remove('scroll-reveal', 'revealed'))
     }
   }, [])
