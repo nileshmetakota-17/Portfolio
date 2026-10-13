@@ -3,14 +3,13 @@ import type { FormEvent, MouseEvent } from 'react'
 import { flushSync } from 'react-dom'
 import { ArrowUpRight, ArrowDown, ArrowUp, Code2, Network, Sun, Moon, Download, Check, Menu, X, Mail } from 'lucide-react'
 import { portfolioData as data } from './portfolioData'
-import { PointCloud } from './components/PointCloud'
-import type { VehiclePose } from './components/PointCloud'
+
+const navigationRoute = 'M145 475H245Q270 475 270 445V360Q270 320 310 320H330Q355 320 355 295V265Q355 240 380 240H480V135'
 
 function NavigationArt({ small = false }: { small?: boolean }) {
   const grid = small ? 'project-grid' : 'hero-grid'
   const routeRef = useRef<SVGPathElement>(null)
   const carRef = useRef<SVGGElement>(null)
-  const vehicle = useRef<VehiclePose>({ x: 145, y: 475, angle: 0 })
   useEffect(() => {
     const route = routeRef.current
     const car = carRef.current
@@ -25,7 +24,6 @@ function NavigationArt({ small = false }: { small?: boolean }) {
       const before = route!.getPointAtLength(Math.max(0, distance - 1))
       const after = route!.getPointAtLength(Math.min(length, distance + 1))
       const angle = Math.atan2(after.y - before.y, after.x - before.x) * 180 / Math.PI
-      vehicle.current = { x: point.x, y: point.y, angle }
       car!.setAttribute('transform', `translate(${point.x} ${point.y}) rotate(${angle})`)
     }
     function drive(now: number) {
@@ -42,15 +40,14 @@ function NavigationArt({ small = false }: { small?: boolean }) {
     preference.addEventListener?.('change', start)
     return () => { cancelAnimationFrame(frame); preference.removeEventListener?.('change', start) }
   }, [])
-  return <div className="navigation-scene" aria-hidden="true"><PointCloud compact={small} vehicle={vehicle} /><svg className="navigation-art" viewBox="0 0 640 640" fill="none" aria-hidden="true">
+  return <svg className="navigation-art" viewBox="0 0 640 640" fill="none" aria-hidden="true">
     <defs><pattern id={grid} width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" stroke="currentColor" strokeOpacity=".1" /></pattern></defs>
-    <g transform="matrix(1 0 .3 .62 -96 171.6)">
     <rect width="640" height="640" fill={`url(#${grid})`} />
     {[100, 180, 260].map(r => <circle key={r} cx="320" cy="320" r={r} stroke="currentColor" strokeOpacity=".2" strokeDasharray={r === 180 ? '3 7' : undefined} />)}
     <path d="M320 20V620M20 320H620M108 108L532 532M108 532L532 108" stroke="currentColor" strokeOpacity=".13" />
     <g fill="currentColor" fillOpacity=".06" stroke="currentColor" strokeOpacity=".35"><rect x="130" y="200" width="90" height="65" rx="8" /><rect x="380" y="350" width="115" height="75" rx="8" /><rect x="385" y="145" width="70" height="75" rx="8" /></g>
-    <path d="M145 475H245Q270 475 270 445V360Q270 320 310 320H330Q355 320 355 295V265Q355 240 380 240H480V135" stroke="#b8efbf" strokeOpacity=".15" strokeWidth="15" />
-    <path ref={routeRef} className="navigation-route" d="M145 475H245Q270 475 270 445V360Q270 320 310 320H330Q355 320 355 295V265Q355 240 380 240H480V135" stroke="#b8efbf" strokeWidth="2" strokeDasharray="6 7" />
+    <path d={navigationRoute} stroke="#b8efbf" strokeOpacity=".15" strokeWidth="15" />
+    <path ref={routeRef} className="navigation-route" d={navigationRoute} stroke="#b8efbf" strokeWidth="2" strokeDasharray="6 7" />
     <g ref={carRef} className="route-traveler navigation-car" transform="translate(145 475)">
       <g fill="#10251a" stroke="#b8efbf" strokeWidth="1">
         <rect x="-18" y="-19" width="12" height="6" rx="2" /><rect x="9" y="-19" width="12" height="6" rx="2" />
@@ -60,16 +57,14 @@ function NavigationArt({ small = false }: { small?: boolean }) {
       <path d="M8 -11L15 -9V9L8 11Z" fill="#173c31" stroke="#f8c9d3" strokeWidth="1" />
       <path d="M-16 -9L-11 -11V11L-16 9Z" fill="#173c31" stroke="#f8c9d3" strokeWidth="1" />
       <rect x="-9" y="-9" width="15" height="18" rx="3" fill="#ffc4d2" />
-      <circle cx="0" cy="0" r="4" fill="#b8efbf" stroke="#173c31" strokeWidth="1.5" />
       <path d="M-6 -11H3M-6 11H3" stroke="#173c31" strokeWidth="2" strokeLinecap="round" />
       <rect x="22" y="-10" width="4" height="6" rx="2" fill="#fff4c1" /><rect x="22" y="4" width="4" height="6" rx="2" fill="#fff4c1" />
       <path d="M-25 -9V-4M-25 4V9" stroke="#9b2541" strokeWidth="3" strokeLinecap="round" />
     </g>
     <circle cx="145" cy="475" r="7" fill="#b8efbf" /><circle className="target-pulse" cx="480" cy="135" r="16" stroke="#f0587a" /><circle cx="480" cy="135" r="5" fill="#f0587a" />
-    <g fill="currentColor" fontSize="11" fontFamily="monospace" opacity=".6"><text x="110" y="505">START</text><text x="495" y="139">GOAL</text></g>
-    </g>
-    <g fill="currentColor" fontSize="11" fontFamily="monospace" opacity=".6"><text x="25" y="32">LOCAL FRAME / MAP</text><text x="25" y="615">ROS 2 · NAV2</text><text x="446" y="615">POINT-TO-POINT</text></g>
-  </svg></div>
+    <g className="radar-sweep"><path d="M320 320V60A260 260 0 0 1 450 95Z" fill="#b8efbf" fillOpacity=".045" /><path d="M320 320V60" stroke="#b8efbf" strokeOpacity=".35" /></g>
+    <g fill="currentColor" fontSize="11" fontFamily="monospace" opacity=".6"><text x="25" y="32">LOCAL FRAME / MAP</text><text x="25" y="615">ROS 2 · NAV2</text><text x="446" y="615">POINT-TO-POINT</text><text x="110" y="505">START</text><text x="495" y="139">GOAL</text></g>
+  </svg>
 }
 
 function FitnessArt() {
