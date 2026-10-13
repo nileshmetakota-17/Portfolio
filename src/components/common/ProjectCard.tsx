@@ -44,7 +44,7 @@ export function ProjectCard({
           </div>
           <div className="relative flex h-full items-center justify-between px-4">
             <div>
-              <div className="text-xs font-semibold text-white/70">Preview</div>
+              <div className="text-xs font-semibold text-white/70">{technologies.slice(0, 2).join(' / ')}</div>
               <div className="mt-1 truncate text-sm font-bold text-white/90" title={title}>
                 {title.replace(/\s–\s.*/, '')}
               </div>
@@ -115,7 +115,6 @@ export function ProjectCard({
               Live Demo
             </a>
           )}
-          {!hasLive && <span className="text-sm text-white/55 self-center">Live demo: soon</span>}
         </div>
       </div>
     </motion.article>

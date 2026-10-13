@@ -1,6 +1,6 @@
 # Nilesh Kumar Metakota — Portfolio
 
-Personal portfolio website built with **React**, **TypeScript**, **Vite**, **Tailwind CSS**, and **Framer Motion**.  
+Personal portfolio website built with **React**, **TypeScript**, **Vite**, and **CSS animations**.  
 Designed to be recruiter-friendly, responsive, and easy to deploy on GitHub Pages, Vercel, or Netlify.
 
 **Live site:** [https://nilesh17.vercel.app](https://nilesh17.vercel.app)
@@ -17,11 +17,13 @@ View the deployed portfolio here:
 
 ## Features
 
-- Dark, premium UI with glassmorphism and smooth animations
-- Sticky navbar with horizontal scroll and active section highlighting
+- Cinematic forest-green cover, oversized typography, and photo-free SVG project illustrations
+- Fixed navigation, mobile menu, and active section highlighting
+- Dark/light theme toggle with saved preference and support for reduced motion
 - Sections: Hero, About, Skills, Experience, Projects, Education, Certifications, Achievements, Contact
-- Resume download as `Nilesh_Metakota_resume.pdf`
+- Resume download as `Nilesh_Metakota_2026.pdf`
 - GitHub & LinkedIn links
+- ROS 2 / Nav2 LiDAR navigation project linked to [github.com/nileshmetakota-17/Lidar_navigation](https://github.com/nileshmetakota-17/Lidar_navigation)
 - Fitoo project linked to [github.com/nileshmetakota-17/Fitoo-](https://github.com/nileshmetakota-17/Fitoo-)
 - SEO metadata in `index.html`
 
@@ -34,8 +36,7 @@ View the deployed portfolio here:
 | React 19 | UI |
 | TypeScript | Type safety |
 | Vite | Dev server & build |
-| Tailwind CSS 4 | Styling |
-| Framer Motion | Animations |
+| CSS | Responsive styling and SVG animations |
 | Lucide React | Icons |
 
 ---
@@ -44,7 +45,7 @@ View the deployed portfolio here:
 
 Install these before you start:
 
-- [Node.js](https://nodejs.org/) **18+** (LTS recommended)
+- [Node.js](https://nodejs.org/) **22.12+**
 - [npm](https://www.npmjs.com/) (comes with Node.js)
 - [Git](https://git-scm.com/) (for GitHub upload)
 
@@ -66,7 +67,7 @@ Upload everything in this folder **except** `node_modules` and `dist` (they are 
 portfolio/
 ├── public/                          # Static assets (served as-is)
 │   ├── favicon.svg
-│   ├── Nilesh_Metakota_resume.pdf   # Resume download
+│   ├── Nilesh_Metakota_2026.pdf   # Resume download
 │   └── icons.svg
 ├── src/
 │   ├── components/
@@ -74,7 +75,9 @@ portfolio/
 │   │   ├── ScrollProgress.tsx
 │   │   ├── BackToTop.tsx
 │   │   └── common/                  # Reusable UI (Button, cards, etc.)
-│   ├── App.tsx                      # Main page & sections
+│   ├── Portfolio.tsx                # Current page and sections
+│   ├── portfolio.css                # Current design and responsive styles
+│   ├── App.tsx                      # Previous design, retained for reference
 │   ├── portfolioData.ts             # ← Edit resume content & links here
 │   ├── main.tsx
 │   └── index.css
@@ -156,7 +159,7 @@ Edit **`src/portfolioData.ts`** to update:
 
 Replace the resume PDF in:
 
-`public/Nilesh_Metakota_resume.pdf`
+`public/Nilesh_Metakota_2026.pdf`
 
 ---
 
