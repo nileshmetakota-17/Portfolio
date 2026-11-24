@@ -13,7 +13,6 @@ import {
   Mail,
   MapPin,
   Network,
-  Phone,
   BadgeCheck,
   Sparkles,
   Star,
@@ -251,8 +250,7 @@ export default function App() {
                 <Reveal delayMs={380}>
                   <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
                     <Button
-                      href={portfolioData.resume.path}
-                      download={portfolioData.resume.downloadName}
+                      href="#resume-request"
                       variant="primary"
                       icon={<Star className="h-4 w-4" />}
                     >
@@ -792,22 +790,7 @@ export default function App() {
                   </div>
                 </GlassCard>
 
-                <GlassCard className="p-6">
-                  <div className="flex items-start gap-3">
-                    <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white/5 ring-1 ring-white/10">
-                      <Phone className="h-5 w-5 text-[var(--accent)]" />
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-white">Phone</div>
-                      <a
-                        href={`tel:${portfolioData.phone.replace(/\s+/g, '')}`}
-                        className="mt-1 block text-sm font-semibold text-white/80 hover:text-white"
-                      >
-                        {portfolioData.phone}
-                      </a>
-                    </div>
-                  </div>
-                </GlassCard>
+
 
                 <GlassCard className="p-6">
                   <div className="flex items-start gap-3">
@@ -837,8 +820,7 @@ export default function App() {
                     LinkedIn
                   </Button>
                   <Button
-                    href={portfolioData.resume.path}
-                    download={portfolioData.resume.downloadName}
+                    href="#resume-request"
                     variant="ghost"
                     icon={<Star className="h-4 w-4" />}
                   >

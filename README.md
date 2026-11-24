@@ -21,10 +21,12 @@ View the deployed portfolio here:
 - Fixed navigation, mobile menu, and active section highlighting
 - Dark/light theme toggle with saved preference and support for reduced motion
 - Sections: Hero, About, Skills, Experience, Projects, Education, Certifications, Achievements, Contact
-- Resume download as `Nilesh_Metakota_2026.pdf`
+- Email-only resume delivery with PDF attachment, delivery status, and owner notifications
 - GitHub & LinkedIn links
 - ROS 2 / Nav2 LiDAR navigation project linked to [github.com/nileshmetakota-17/Lidar_navigation](https://github.com/nileshmetakota-17/Lidar_navigation)
 - Fitoo project linked to [github.com/nileshmetakota-17/Fitoo-](https://github.com/nileshmetakota-17/Fitoo-)
+- VIO offline visual place recognition prototype linked to [github.com/nileshmetakota-17/VIO](https://github.com/nileshmetakota-17/VIO)
+- Email contact with copy-to-clipboard and mailto form
 - SEO metadata in `index.html`
 
 ---
@@ -67,7 +69,6 @@ Upload everything in this folder **except** `node_modules` and `dist` (they are 
 portfolio/
 ├── public/                          # Static assets (served as-is)
 │   ├── favicon.svg
-│   ├── Nilesh_Metakota_2026.pdf   # Resume download
 │   └── icons.svg
 ├── src/
 │   ├── components/
@@ -155,11 +156,11 @@ Edit **`src/portfolioData.ts`** to update:
 - Name, title, contact info
 - GitHub / LinkedIn URLs
 - Experience, projects, education, certifications
-- Resume path & download filename
+- Resume request button labels
 
 Replace the resume PDF in:
 
-`public/Nilesh_Metakota_2026.pdf`
+`private/Nilesh_Metakota_2026.pdf`
 
 ---
 
@@ -203,6 +204,29 @@ Refresh your repository page. You should see:
 - **No** `node_modules/` or `dist/` (ignored by `.gitignore`)
 
 ---
+
+## Resume email setup
+
+The resume is **not included in the public/static build**. All resume links open the email request form. The PDF lives in `private/Nilesh_Metakota_2026.pdf` and is attached by the server only. Old public PDF copies have been removed. Previously published files and Git history may still contain earlier copies; deploy these changes to remove current public downloads.
+
+The email feature requires a server (Vercel Functions are configured in `vercel.json`). Static-only hosting cannot send email; the portfolio can still build, but requests will fail until server configuration is complete.
+
+1. Create a [Resend account](https://resend.com), verify a sending domain you control, and create an API key. A `vercel.app` hostname or ordinary Gmail address is not your own verified sending domain. Resend’s test sender cannot email arbitrary visitors.
+2. Create an [Upstash Redis](https://upstash.com) database for shared rate limits, request status, and notification deduplication. Use its REST URL and REST token.
+3. Copy `.env.example` to `.env.local` and fill the server variables. Never commit credentials or use `VITE_` prefixes. In production, add the same variables in Vercel’s project environment settings.
+4. Create a Resend webhook pointing to `https://YOUR_PORTFOLIO_HOST/api/resume-delivered`. Subscribe to `email.delivered`, `email.bounced`, `email.failed`, and `email.suppressed`. Save its signing secret as `RESEND_WEBHOOK_SECRET` and redeploy.
+5. Set `RESUME_FROM_EMAIL` to a verified sender, for example `Nilesh <resume@your-domain.com>`. Owner notifications default to `nilesh.metakota@gmail.com`; override with `RESUME_OWNER_EMAIL`.
+6. Run `npm run dev` locally. Vite includes the API routes for local development. Restart after changing `.env.local`. Local delivery webhooks require a public HTTPS tunnel registered with Resend; delivery status will stay pending without webhook access. `npm run preview` is static preview only.
+
+The form rejects invalid email syntax immediately. The server checks email-domain DNS before sending. A valid domain does **not** prove that a mailbox exists. A signed bounce with SMTP code `5.1.1` shows “This email address does not exist”; other bounces show an accurate delivery error. Catch-all domains and servers hiding mailbox existence cannot be definitively checked. Temporary DNS failures show a retry message.
+
+Successful send API responses mean **queued**, not delivered. The browser checks delivery status for up to two minutes, then offers a manual recheck; delivery records expire after 24 hours. Owner notifications are sent only on verified `email.delivered` events and use the event timestamp in `Asia/Kolkata`, formatted `DD/MM/YYYY` and `HH:MM AM/PM IST`. Delivery means acceptance by the recipient mail server, not proof that a visitor read the message.
+
+Notification retries use the provider’s idempotency key and a permanent email-ID marker in Redis. Request limits are 3 per recipient, 5 per IP, and 100 overall per hour; the first request starts each window. Recipient and IP rate-limit keys are hashed. The status endpoint requires an unguessable per-request token and returns no email addresses.
+
+Validate with `npm test` and `npm run build`. Automated tests use simulated providers and signed webhook payloads; they do not send real email. Live delivery requires credentials, a verified domain, and an accessible webhook.
+
+Provider references: [Resend attachments](https://resend.com/docs/api-reference/emails/send-email), [delivery events](https://resend.com/docs/webhooks/emails/delivered), [webhook verification](https://resend.com/docs/webhooks/verify-webhooks-requests), [Vercel server file bundling](https://vercel.com/kb/guide/how-can-i-use-files-in-serverless-functions).
 
 ## Deploy
 

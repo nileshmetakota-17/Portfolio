@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/request-resume.js": { "includeFiles": "private/Nilesh_Metakota_2026.pdf", "maxDuration": 60 },
+    "api/resume-delivered.js": { "maxDuration": 60 }
+  }
+}

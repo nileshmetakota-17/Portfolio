@@ -27,6 +27,9 @@ export type Project = {
   description: string
   technologies: string[]
   features: string[]
+  category?: string
+  headline?: string
+  artwork?: 'navigation' | 'fitness' | 'vision'
   githubUrl?: string
   liveUrl?: string
 }
@@ -39,16 +42,11 @@ export const portfolioData = {
   title: 'Robotics Software Engineer',
   location: 'Pithapuram, India',
   email: 'nilesh.metakota@gmail.com',
-  phone: '+91 8309854539',
   githubHandle: 'nileshmetakota-17',
   linkedinHandle: 'Nilesh_Metakota',
   links: {
     github: 'https://github.com/nileshmetakota-17',
     linkedin: 'https://www.linkedin.com/in/nilesh-kumar-metakota-4ab347335',
-  },
-  resume: {
-    path: '/Nilesh_Metakota_2026.pdf',
-    downloadName: 'Nilesh_Metakota_2026.pdf',
   },
   hero: {
     tagline: 'Building autonomous robots that navigate the real world.',
@@ -65,7 +63,7 @@ export const portfolioData = {
   },
   stats: [
     { label: 'Experience Roles', value: '4', hint: 'Robotics, ML, testing & web' },
-    { label: 'Featured Projects', value: '2', hint: 'Autonomous navigation & Fitoo' },
+    { label: 'Featured Projects', value: '3', hint: 'Navigation, Fitoo & VIO' },
     { label: 'Certifications', value: '1', hint: 'Full-Stack Internship' },
     { label: 'Collaboration Style', value: 'Team', hint: 'Agile & cross-functional' },
   ],
@@ -149,6 +147,9 @@ export const portfolioData = {
   projects: [
     {
       title: 'LiDAR-Based Autonomous Navigation',
+      category: 'Robotics / Autonomous systems',
+      headline: 'Finding a way forward.',
+      artwork: 'navigation',
       description: 'A ROS 2 navigation system for autonomous robot movement between target locations, with obstacle avoidance and sensor integration.',
       technologies: ['ROS 2', 'Nav2', 'LiDAR', 'GPS', 'Camera Integration'],
       features: [
@@ -161,6 +162,9 @@ export const portfolioData = {
     },
     {
       title: 'Fitoo – AI Integrated Meal & Workout Management System',
+      category: 'Application development / AI',
+      headline: 'Fitness, with a little intelligence.',
+      artwork: 'fitness',
       description:
         'Android fitness app combining meal logging, workout tracking, step-based activity, and an in-app AI coach (Sensei) with Room database storage.',
       technologies: ['Java', 'Android', 'Room SQLite', 'Material 3', 'OpenAI / AI Coach'],
@@ -171,6 +175,20 @@ export const portfolioData = {
       ],
       githubUrl: 'https://github.com/nileshmetakota-17/Fitoo-',
       liveUrl: '',
+    },
+    {
+      title: 'VIO – Offline Visual Place Recognition',
+      category: 'Computer vision / Android',
+      headline: 'Recognizing familiar places.',
+      artwork: 'vision',
+      description: 'An experimental offline Android app that matches live camera views with reference images stored on the device to recognize previously mapped places.',
+      technologies: ['Kotlin', 'Android', 'Computer Vision', 'On-device Matching'],
+      features: [
+        'Capture reference views with zone labels, route distances, and optional GPS tags; export and import map packages.',
+        'Recognize mapped zones from the camera, with candidate matches, relative heading, approximate route distance, and uncertainty states.',
+        'Visual place recognition prototype; real-world accuracy, performance, and battery use have not yet been measured on a phone.',
+      ],
+      githubUrl: 'https://github.com/nileshmetakota-17/VIO',
     },
   ] satisfies Project[],
   education: [
