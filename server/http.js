@@ -13,7 +13,7 @@ export function respond(res, status, body) {
   res.setHeader('Cache-Control', 'no-store')
   res.setHeader('Content-Type', 'application/json')
   if (status === 405) res.setHeader('Allow', 'POST')
-  if (status === 429) res.setHeader('Retry-After', '3600')
+  if (status === 429) res.setHeader('Retry-After', String(body.retryAfter || 3600))
   res.statusCode = status
   res.end(JSON.stringify(body))
 }

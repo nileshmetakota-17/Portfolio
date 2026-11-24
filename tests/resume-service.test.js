@@ -130,7 +130,7 @@ test('notification failure returns retryable error; retry uses stable idempotenc
 
 test('rate limits recipient requests and fails safely without credentials', async () => {
   const f = fixture()
-  for (let i = 0; i < 3; i++) assert.equal((await f.service.request({ email: 'visitor@example.com' }, 'ip')).status, 202)
+  for (let i = 0; i < 10; i++) assert.equal((await f.service.request({ email: 'visitor@example.com' }, 'ip')).status, 202)
   assert.equal((await f.service.request({ email: 'visitor@example.com' }, 'ip')).status, 429)
   const unconfigured = fixture({ env: {} })
   assert.equal((await unconfigured.service.request({ email: 'visitor@example.com' }, 'ip')).status, 503)
@@ -148,4 +148,18 @@ test('no PDF is publicly distributed in the static build', async () => {
   assert.equal(pdf.subarray(0, 4).toString(), '%PDF')
   const src = await readFile('src/Portfolio.tsx', 'utf8')
   assert.equal(/download=|data\.resume\.path/.test(src), false)
+})
+
+
+test('new limits ignore old one-hour counters and report the shorter retry window', async () => {
+  const f = fixture()
+  f.storage.set('resume:rate:global', 1000)
+  for (let i = 0; i < 10; i++) {
+    assert.equal((await f.service.request({ email: 'visitor@example.com' }, 'ip')).status, 202)
+  }
+  const limited = await f.service.request({ email: 'visitor@example.com' }, 'ip')
+  assert.equal(limited.status, 429)
+  assert.equal(limited.body.retryAfter, 600)
+  assert.match(limited.body.error, /10 minutes/)
+  assert.equal(f.emails.length, 10, 'a blocked request must not send an email')
 })

@@ -121,10 +121,15 @@ export function createResumeService({ env = process.env, fetcher = fetch, gmailS
       try {
         // Atomic per-key counters, shared by all serverless instances. Hash personal data.
         const hash = value => createHmac('sha256', env.UPSTASH_REDIS_REST_TOKEN).update(value).digest('hex')
-        const rateScript = "local n = redis.call('INCR', KEYS[1]); if n == 1 then redis.call('EXPIRE', KEYS[1], 3600) end; return n"
-        for (const [key, limit] of [[`ip:${hash(ip)}`, 5], [`email:${hash(email.toLowerCase())}`, 3], ['global', 100]]) {
-          const count = await redis(['EVAL', rateScript, '1', `resume:rate:${key}`])
-          if (count > limit) return reply(429, { error: 'Too many requests. Please try again in an hour.' })
+        // Short visitor windows accommodate retries; retain a separate hourly send cap.
+        // A new namespace prevents the old one-hour counters blocking the new policy.
+        for (const [key, limit, seconds] of [[`ip:${hash(ip)}`, 20, 600], [`email:${hash(email.toLowerCase())}`, 10, 600], ['global', 100, 3600]]) {
+          const rateScript = `local n = redis.call('INCR', KEYS[1]); if n == 1 then redis.call('EXPIRE', KEYS[1], ${seconds}) end; return n`
+          const count = await redis(['EVAL', rateScript, '1', `resume:rate:v2:${key}`])
+          if (count > limit) return reply(429, {
+            error: seconds === 600 ? 'Too many resume requests. Please try again in 10 minutes.' : 'Resume email is busy. Please try again in an hour.',
+            retryAfter: seconds,
+          })
         }
         const domainStatus = await checkDomain(email.split('@')[1])
         if (domainStatus === 'nonexistent') return reply(400, { error: 'This email domain does not accept email or does not exist. Please check the address.' })

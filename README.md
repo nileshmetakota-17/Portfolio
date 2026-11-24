@@ -239,7 +239,7 @@ Register `https://YOUR_PORTFOLIO_HOST/api/resume-delivered` in Resend for `email
 
 ### Validation and operation
 
-The server validates email syntax and DNS mail routing before sending. Domain existence cannot prove mailbox existence. Temporary DNS errors produce a retry message, and full inboxes/policy failures are not labelled nonexistent. Rate limits are 3 per recipient, 5 per IP, and 100 overall per hour; counters begin with the first request. IP and email rate keys are hashed. Status tokens are unguessable and expire after 24 hours. Pending Gmail notification records contain the recipient email and submission timestamp until success or expiry; protect Redis credentials accordingly.
+The server validates email syntax and DNS mail routing before sending. Domain existence cannot prove mailbox existence. Temporary DNS errors produce a retry message, and full inboxes/policy failures are not labelled nonexistent. Rate limits are 10 per recipient and 20 per IP per 10 minutes, plus 100 overall per hour; counters begin with the first request. The v2 rate-key namespace replaces the previous one-hour visitor counters on deployment. IP and email rate keys are hashed. Status tokens are unguessable and expire after 24 hours. Pending Gmail notification records contain the recipient email and submission timestamp until success or expiry; protect Redis credentials accordingly.
 
 Run `npm test` and `npm run build`. Tests use mock email providers; they never send real email. `npm run dev` includes the API locally; `npm run preview` is static-only. Serverless hosting is required for email sending. Keep credentials in `.env.local` or hosting environment settings, never in `.env.example` or `VITE_` variables.
 
