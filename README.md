@@ -17,10 +17,10 @@ View the deployed portfolio here:
 
 ## Features
 
-- Cinematic forest-green cover, oversized typography, and photo-free SVG project illustrations
-- Fixed navigation, mobile menu, and active section highlighting
+- Graphite and orange robotics portfolio with an interactive navigation study and custom SVG project illustrations
+- Sticky navigation, mobile menu, and active section highlighting
 - Dark/light theme toggle with saved preference and support for reduced motion
-- Sections: Hero, About, Skills, Experience, Projects, Education, Certifications, Achievements, Contact
+- Filterable project showcase, robotics expertise, experience, about, education, certifications, contact, and email-only resume delivery
 - Email-only resume delivery with PDF attachment, delivery status, and owner notifications
 - GitHub & LinkedIn links
 - ROS 2 / Nav2 LiDAR navigation project linked to [github.com/nileshmetakota-17/Lidar_navigation](https://github.com/nileshmetakota-17/Lidar_navigation)
