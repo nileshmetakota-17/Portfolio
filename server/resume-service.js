@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { createHmac, randomUUID } from 'node:crypto'
 import { Webhook } from 'svix'
+import { createGmailSender } from './gmail.js'
 import { resolveMx, resolve4, resolve6 } from 'node:dns/promises'
 
 export function validEmail(value) {
@@ -43,9 +44,25 @@ export function notificationText(email, timestamp) {
   return `Visitor Email: ${email}\nDate: ${day}\nTime: ${time} IST\nStatus: Resume successfully delivered.`
 }
 
-export function createResumeService({ env = process.env, fetcher = fetch, checkDomain = emailDomainStatus, loadPdf = () => readFile(new URL('../private/Nilesh_Metakota_2026.pdf', import.meta.url)) } = {}) {
+export function createResumeService({ env = process.env, fetcher = fetch, gmailSend, checkDomain = emailDomainStatus, loadPdf = () => readFile(new URL('../private/Nilesh_Metakota_2026.pdf', import.meta.url)) } = {}) {
+  const provider = env.RESUME_EMAIL_PROVIDER || 'resend'
+  const usingGmail = provider === 'gmail'
+  let smtpSend = gmailSend
   function configured() {
-    return ['RESEND_API_KEY', 'RESUME_FROM_EMAIL', 'RESEND_WEBHOOK_SECRET', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN'].every(key => env[key])
+    const required = usingGmail
+      ? ['GMAIL_USER', 'GMAIL_APP_PASSWORD', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']
+      : ['RESEND_API_KEY', 'RESUME_FROM_EMAIL', 'RESEND_WEBHOOK_SECRET', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']
+    if (!['gmail', 'resend'].includes(provider)) {
+      console.error('[resume-config] Unsupported RESUME_EMAIL_PROVIDER')
+      return false
+    }
+    const missing = required.filter(key => typeof env[key] !== 'string' || !env[key].trim())
+    if (missing.length) {
+      // Log names only: never log credentials, the request body, or the visitor email.
+      console.error(`[resume-config] Missing environment variables: ${missing.join(', ')}`)
+      return false
+    }
+    return true
   }
   async function redis(command) {
     const response = await fetcher(env.UPSTASH_REDIS_REST_URL, {
@@ -58,6 +75,10 @@ export function createResumeService({ env = process.env, fetcher = fetch, checkD
     return result.result
   }
   async function send(message, idempotencyKey) {
+    if (usingGmail) {
+      smtpSend ||= createGmailSender(env)
+      return smtpSend(message)
+    }
     const response = await fetcher('https://api.resend.com/emails', {
       method: 'POST', headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json', 'Idempotency-Key': idempotencyKey },
       body: JSON.stringify({ from: env.RESUME_FROM_EMAIL, ...message }), signal: AbortSignal.timeout(15000),
@@ -66,6 +87,29 @@ export function createResumeService({ env = process.env, fetcher = fetch, checkD
     const result = await response.json()
     if (!result.id) throw new Error('Missing email confirmation')
     return result.id
+  }
+  async function notifyGmailOwner(token) {
+    const key = `resume:gmail-notification:${token}`
+    const lock = `${key}:lock`
+    if (!await redis(['GET', key])) return true
+    if (!await redis(['SET', lock, '1', 'NX', 'EX', '60'])) return false
+    try {
+      const pending = await redis(['GET', key])
+      if (!pending) return true
+      const { email, timestamp } = JSON.parse(pending)
+      await send({
+        to: [env.RESUME_OWNER_EMAIL || env.GMAIL_USER],
+        subject: 'New Resume Download Request',
+        text: notificationText(email, timestamp).replace('Resume successfully delivered.', 'Resume accepted for sending by Gmail. Inbox delivery is not confirmed.'),
+      }, `gmail-notification/${token}`)
+      await redis(['DEL', key])
+      return true
+    } catch {
+      console.error('[resume-mail] Gmail owner notification pending; delivery status checks will retry it.')
+      return false
+    } finally {
+      await redis(['DEL', lock])
+    }
   }
   const reply = (status, body) => ({ status, body })
   return {
@@ -94,8 +138,25 @@ export function createResumeService({ env = process.env, fetcher = fetch, checkD
           attachments: [{ filename: 'Nilesh_Metakota_2026.pdf', content: pdf.toString('base64'), content_type: 'application/pdf' }],
           tags: [{ name: 'category', value: 'portfolio_resume' }, { name: 'request_id', value: token }],
         }, `resume-request/${randomUUID()}`)
+        if (usingGmail) {
+          // No delivery webhook is available: do not label SMTP acceptance as delivered.
+          let notificationPending = true
+          try {
+            await redis(['SET', `resume:status:${token}`, 'submitted', 'EX', '86400'])
+            await redis(['SET', `resume:gmail-notification:${token}`, JSON.stringify({ email, timestamp: new Date().toISOString() }), 'EX', '86400'])
+            notificationPending = !await notifyGmailOwner(token)
+          } catch {
+            console.error('[resume-mail] Gmail accepted the resume but follow-up storage is unavailable.')
+          }
+          return reply(202, { token, status: 'submitted', notificationPending, message: 'Your resume email has been sent through Gmail. Please check your inbox and spam folder.' })
+        }
         return reply(202, { token, message: 'Your resume email has been queued. Check your inbox and spam folder shortly.' })
-      } catch {
+      } catch (error) {
+        if (usingGmail && /(?:^|[^0-9])5\.1\.1(?:[^0-9]|$)/.test(String(error.response || ''))) {
+          return reply(400, { error: 'This email address does not exist. Please check it and try again.' })
+        }
+        // Never log SMTP responses or credentials; only the coarse failure class.
+        if (usingGmail) console.error(`[resume-mail] Gmail send failed: ${['EAUTH', 'ECONNECTION', 'ETIMEDOUT', 'EENVELOPE'].includes(error.code) ? error.code : 'SMTP_ERROR'}`)
         return reply(503, { error: 'We could not queue your resume email. Please try again later.' })
       }
     },
@@ -105,10 +166,14 @@ export function createResumeService({ env = process.env, fetcher = fetch, checkD
       try {
         const status = await redis(['GET', `resume:status:${body.token}`])
         if (!status) return reply(404, { error: 'This delivery check has expired. Please check your inbox or submit a new request.' })
+        if (usingGmail && status === 'submitted') {
+          return reply(200, { status, notificationPending: !await notifyGmailOwner(body.token) })
+        }
         return reply(200, { status })
       } catch { return reply(503, { error: 'Unable to check delivery right now. Please try again shortly.' }) }
     },
     async webhook(payload, headers) {
+      if (usingGmail) return reply(200, { received: true, ignored: true })
       if (!configured()) return reply(503, { error: 'Email delivery is not configured.' })
       let event
       try { event = new Webhook(env.RESEND_WEBHOOK_SECRET).verify(payload, headers) }

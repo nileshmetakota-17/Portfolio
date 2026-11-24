@@ -207,26 +207,43 @@ Refresh your repository page. You should see:
 
 ## Resume email setup
 
-The resume is **not included in the public/static build**. All resume links open the email request form. The PDF lives in `private/Nilesh_Metakota_2026.pdf` and is attached by the server only. Old public PDF copies have been removed. Previously published files and Git history may still contain earlier copies; deploy these changes to remove current public downloads.
+The PDF is stored at `private/Nilesh_Metakota_2026.pdf`, bundled only with the request API, and excluded from the public/static build. All resume links open the email form. Deploy the changes to remove previously published website downloads. Git history may still contain older copies.
 
-The email feature requires a server (Vercel Functions are configured in `vercel.json`). Static-only hosting cannot send email; the portfolio can still build, but requests will fail until server configuration is complete.
+### Gmail mode: no custom domain required
 
-1. Create a [Resend account](https://resend.com), verify a sending domain you control, and create an API key. A `vercel.app` hostname or ordinary Gmail address is not your own verified sending domain. Resend’s test sender cannot email arbitrary visitors.
-2. Create an [Upstash Redis](https://upstash.com) database for shared rate limits, request status, and notification deduplication. Use its REST URL and REST token.
-3. Copy `.env.example` to `.env.local` and fill the server variables. Never commit credentials or use `VITE_` prefixes. In production, add the same variables in Vercel’s project environment settings.
-4. Create a Resend webhook pointing to `https://YOUR_PORTFOLIO_HOST/api/resume-delivered`. Subscribe to `email.delivered`, `email.bounced`, `email.failed`, and `email.suppressed`. Save its signing secret as `RESEND_WEBHOOK_SECRET` and redeploy.
-5. Set `RESUME_FROM_EMAIL` to a verified sender, for example `Nilesh <resume@your-domain.com>`. Owner notifications default to `nilesh.metakota@gmail.com`; override with `RESUME_OWNER_EMAIL`.
-6. Run `npm run dev` locally. Vite includes the API routes for local development. Restart after changing `.env.local`. Local delivery webhooks require a public HTTPS tunnel registered with Resend; delivery status will stay pending without webhook access. `npm run preview` is static preview only.
+1. Enable Google 2-Step Verification for the sender account, then create a Google [App Password](https://myaccount.google.com/apppasswords) named `Portfolio Resume`. Use the App Password, never the regular Google password.
+2. Set these server variables in `.env.local` and in Vercel's **Production** environment:
 
-The form rejects invalid email syntax immediately. The server checks email-domain DNS before sending. A valid domain does **not** prove that a mailbox exists. A signed bounce with SMTP code `5.1.1` shows “This email address does not exist”; other bounces show an accurate delivery error. Catch-all domains and servers hiding mailbox existence cannot be definitively checked. Temporary DNS failures show a retry message.
+```env
+RESUME_EMAIL_PROVIDER=gmail
+GMAIL_USER=nilesh.metakota@gmail.com
+GMAIL_APP_PASSWORD=YOUR_GOOGLE_APP_PASSWORD
+RESUME_OWNER_EMAIL=nilesh.metakota@gmail.com
+UPSTASH_REDIS_REST_URL=YOUR_UPSTASH_REST_URL
+UPSTASH_REDIS_REST_TOKEN=YOUR_UPSTASH_REST_TOKEN
+```
 
-Successful send API responses mean **queued**, not delivered. The browser checks delivery status for up to two minutes, then offers a manual recheck; delivery records expire after 24 hours. Owner notifications are sent only on verified `email.delivered` events and use the event timestamp in `Asia/Kolkata`, formatted `DD/MM/YYYY` and `HH:MM AM/PM IST`. Delivery means acceptance by the recipient mail server, not proof that a visitor read the message.
+3. Keep the existing Upstash database and regular REST token. It supplies shared request limits and status storage.
+4. Push the code and redeploy Vercel after saving environment changes. Restart `npm run dev` after local changes. Resend API keys, sender domains, and webhook secrets are not required in Gmail mode; an old Resend webhook is ignored.
+5. Test with a different inbox you control, checking both inbox and spam. Gmail sends to addresses outside the sender account, subject to Google's sending limits and anti-abuse checks. Google may reject SMTP sign-ins based on account settings or server location; check Vercel's server logs for the coarse error class, without publishing credentials.
 
-Notification retries use the provider’s idempotency key and a permanent email-ID marker in Redis. Request limits are 3 per recipient, 5 per IP, and 100 overall per hour; the first request starts each window. Recipient and IP rate-limit keys are hashed. The status endpoint requires an unguessable per-request token and returns no email addresses.
+Gmail SMTP acceptance means the message was accepted for sending, **not confirmed delivered to the recipient's inbox**. The UI says sent, never delivered. The owner notification retains the visitor email and IST date/time, but accurately states `Resume accepted for sending by Gmail. Inbox delivery is not confirmed.` Gmail does not provide the Resend delivery webhook. A mailbox rejected immediately with SMTP code `5.1.1` produces a nonexistent-address error; a later Gmail bounce may arrive in the sender inbox and cannot automatically update this website. Do not treat acceptance as proof that a mailbox exists.
 
-Validate with `npm test` and `npm run build`. Automated tests use simulated providers and signed webhook payloads; they do not send real email. Live delivery requires credentials, a verified domain, and an accessible webhook.
+Owner notifications are attempted after Gmail accepts the PDF. If notification sending fails, a pending notification is retained for 24 hours and delivery-status requests retry it while the page remains open (up to two minutes). A Redis lock avoids concurrent sends, but SMTP has no provider idempotency guarantee; a failure after SMTP acceptance can still cause a duplicate notification on retry. Retries are not a background delivery worker.
 
-Provider references: [Resend attachments](https://resend.com/docs/api-reference/emails/send-email), [delivery events](https://resend.com/docs/webhooks/emails/delivered), [webhook verification](https://resend.com/docs/webhooks/verify-webhooks-requests), [Vercel server file bundling](https://vercel.com/kb/guide/how-can-i-use-files-in-serverless-functions).
+### Optional Resend mode
+
+The original confirmed-delivery workflow is retained. Set `RESUME_EMAIL_PROVIDER=resend`, `RESEND_API_KEY`, `RESUME_FROM_EMAIL`, `RESEND_WEBHOOK_SECRET`, and the two Upstash variables. Owner notifications default to `RESUME_OWNER_EMAIL`. For unrestricted recipients, verify a domain you own in Resend and use an address on that domain. The test sender `onboarding@resend.dev` can only send to the Resend account email.
+
+Register `https://YOUR_PORTFOLIO_HOST/api/resume-delivered` in Resend for `email.delivered`, `email.bounced`, `email.failed`, and `email.suppressed`. Only signed, confirmed resume delivery events trigger the successful-delivery owner notification. Notification retries use provider idempotency and a permanent Redis email-ID marker. Resend delivery means acceptance by the recipient mail server, not a read receipt. Local Resend webhooks require a public HTTPS tunnel; Gmail mode does not need a webhook or tunnel.
+
+### Validation and operation
+
+The server validates email syntax and DNS mail routing before sending. Domain existence cannot prove mailbox existence. Temporary DNS errors produce a retry message, and full inboxes/policy failures are not labelled nonexistent. Rate limits are 3 per recipient, 5 per IP, and 100 overall per hour; counters begin with the first request. IP and email rate keys are hashed. Status tokens are unguessable and expire after 24 hours. Pending Gmail notification records contain the recipient email and submission timestamp until success or expiry; protect Redis credentials accordingly.
+
+Run `npm test` and `npm run build`. Tests use mock email providers; they never send real email. `npm run dev` includes the API locally; `npm run preview` is static-only. Serverless hosting is required for email sending. Keep credentials in `.env.local` or hosting environment settings, never in `.env.example` or `VITE_` variables.
+
+Provider references: [Google App Passwords](https://support.google.com/accounts/answer/185833), [Nodemailer SMTP](https://nodemailer.com/smtp), [Resend delivery events](https://resend.com/docs/webhooks/emails/delivered), [Vercel file bundling](https://vercel.com/kb/guide/how-can-i-use-files-in-serverless-functions).
 
 ## Deploy
 

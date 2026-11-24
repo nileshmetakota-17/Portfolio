@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 
-type Delivery = 'idle' | 'sending' | 'pending' | 'delivered' | 'error'
+type Delivery = 'idle' | 'sending' | 'pending' | 'delivered' | 'submitted' | 'error'
 
 export function ResumeRequest() {
   const [email, setEmail] = useState('')
@@ -26,6 +26,11 @@ export function ResumeRequest() {
         const result = await response.json()
         if (stopped) return
         if (!response.ok) throw new Error(result.error || 'Unable to check delivery right now.')
+        if (result.status === 'submitted') {
+          setDelivery('submitted')
+          setMessage('Your resume email has been sent through Gmail. Please check your inbox and spam folder.')
+          if (!result.notificationPending) { setChecking(false); return }
+        }
         if (result.status === 'delivered') {
           setDelivery('delivered')
           setMessage('Your resume was delivered. Please check your inbox and spam folder.')
@@ -42,7 +47,7 @@ export function ResumeRequest() {
           setChecking(true)
           timer = setTimeout(check, 3000)
         } else {
-          setMessage('Delivery has not been confirmed yet. Check your inbox or check the delivery status again shortly.')
+          if (result.status !== 'submitted') setMessage('Delivery has not been confirmed yet. Check your inbox or check the delivery status again shortly.')
           setChecking(false)
         }
       } catch (error) {
@@ -70,10 +75,17 @@ export function ResumeRequest() {
       const result = await response.json()
       if (!response.ok) throw new Error(result.error || 'Unable to send the resume. Please try again later.')
       if (!result.token) throw new Error('Unable to track delivery. Please try again later.')
-      setDelivery('pending')
-      setMessage('Your email is queued. Waiting for delivery confirmation…')
-      setChecking(true)
-      setToken(result.token)
+      if (result.status === 'submitted') {
+        setDelivery('submitted')
+        setMessage('Your resume email has been sent through Gmail. Please check your inbox and spam folder.')
+        setChecking(Boolean(result.notificationPending))
+        if (result.notificationPending) setToken(result.token)
+      } else {
+        setDelivery('pending')
+        setMessage('Your email is queued. Waiting for delivery confirmation…')
+        setChecking(true)
+        setToken(result.token)
+      }
     } catch (error) {
       setDelivery('error')
       setMessage(error instanceof Error ? error.message : 'Unable to send the resume. Please try again later.')
@@ -85,10 +97,10 @@ export function ResumeRequest() {
     <p>Enter your email address and I’ll send my resume as a PDF attachment.</p>
     <form className="resume-form" onSubmit={submit}>
       <label htmlFor="resume-email">Email address</label>
-      <input id="resume-email" name="email" type="email" autoComplete="email" required maxLength={254} value={email} onChange={event => setEmail(event.target.value)} placeholder="you@example.com" aria-describedby="resume-help resume-status" disabled={delivery === 'sending' || checking} />
+      <input id="resume-email" name="email" type="email" autoComplete="email" required maxLength={254} value={email} onChange={event => setEmail(event.target.value)} placeholder="you@example.com" aria-describedby="resume-help resume-status" disabled={delivery === 'sending' || (checking && delivery !== 'submitted')} />
       <div className="resume-trap" aria-hidden="true"><label htmlFor="resume-website">Website</label><input id="resume-website" name="website" tabIndex={-1} autoComplete="off" /></div>
       <p id="resume-help" className="muted">Your email is used to deliver this resume.</p>
-      <button className="pill-button" type="submit" disabled={delivery === 'sending' || checking}>{delivery === 'sending' ? 'Sending…' : checking ? 'Checking delivery…' : 'Email me the resume'}</button>
+      <button className="pill-button" type="submit" disabled={delivery === 'sending' || (checking && delivery !== 'submitted')}>{delivery === 'sending' ? 'Sending…' : checking && delivery !== 'submitted' ? 'Checking delivery…' : 'Email me the resume'}</button>
     </form>
     <p id="resume-status" role={delivery === 'error' ? 'alert' : 'status'} className={`resume-status ${delivery === 'error' ? 'resume-error' : ''}`}>{message}</p>
     {token && delivery === 'pending' && !checking && <button className="text-link copy-button" type="button" onClick={() => { setChecking(true); setPollRun(value => value + 1) }}>Check delivery status</button>}
