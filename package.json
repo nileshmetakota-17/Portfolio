@@ -11,6 +11,7 @@
     "test": "node --test tests/*.test.js"
   },
   "dependencies": {
+    "@vercel/functions": "^3.11.3",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.16.0",
     "nodemailer": "^10.6.1",

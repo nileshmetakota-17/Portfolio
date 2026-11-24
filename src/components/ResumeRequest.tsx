@@ -29,7 +29,8 @@ export function ResumeRequest() {
         if (result.status === 'submitted') {
           setDelivery('submitted')
           setMessage('Your resume email has been sent through Gmail. Please check your inbox and spam folder.')
-          if (!result.notificationPending) { setChecking(false); return }
+          setChecking(false)
+          return
         }
         if (result.status === 'delivered') {
           setDelivery('delivered')
@@ -78,8 +79,8 @@ export function ResumeRequest() {
       if (result.status === 'submitted') {
         setDelivery('submitted')
         setMessage('Your resume email has been sent through Gmail. Please check your inbox and spam folder.')
-        setChecking(Boolean(result.notificationPending))
-        if (result.notificationPending) setToken(result.token)
+        // Owner notification is background work and must not keep the visitor waiting.
+        setChecking(false)
       } else {
         setDelivery('pending')
         setMessage('Your email is queued. Waiting for delivery confirmation…')
@@ -87,8 +88,12 @@ export function ResumeRequest() {
         setToken(result.token)
       }
     } catch (error) {
-      setDelivery('error')
-      setMessage(error instanceof Error ? error.message : 'Unable to send the resume. Please try again later.')
+      const timedOut = error instanceof Error && ['TimeoutError', 'AbortError'].includes(error.name)
+      setDelivery(timedOut ? 'pending' : 'error')
+      setChecking(false)
+      setMessage(timedOut
+        ? 'The request took too long to confirm. Please check your inbox and spam folder before trying again.'
+        : error instanceof Error ? error.message : 'Unable to send the resume. Please try again later.')
     }
   }
   return <section id="resume-request" className="section-shell resume-section" aria-labelledby="resume-title">

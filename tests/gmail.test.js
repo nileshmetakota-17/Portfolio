@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { createResumeService } from '../server/resume-service.js'
 import { createGmailSender } from '../server/gmail.js'
 
-function fixture() {
+function fixture(options = {}) {
   const values = new Map()
   const messages = []
   let failVisitor = false
@@ -11,6 +11,7 @@ function fixture() {
   const env = { RESUME_EMAIL_PROVIDER: 'gmail', GMAIL_USER: 'owner@gmail.com', GMAIL_APP_PASSWORD: 'test-app-password', UPSTASH_REDIS_REST_URL: 'https://storage.example.com', UPSTASH_REDIS_REST_TOKEN: 'test-token' }
   const service = createResumeService({ env, checkDomain: async () => 'valid', loadPdf: async () => Buffer.from('%PDF-test'), gmailSend: async message => {
     if (failVisitor && message.attachments) throw Object.assign(new Error('recipient does not exist'), { code: 'EENVELOPE', response: '550 5.1.1 mailbox does not exist' })
+    if (!message.attachments) await options.beforeOwner?.()
     if (failOwner && !message.attachments) throw new Error('temporary failure')
     messages.push(message)
     return '<smtp-message-id@gmail.com>'
@@ -30,7 +31,7 @@ function fixture() {
       values.set(rateKey, result)
     }
     return Response.json({ result })
-  } })
+  }, ...(options.defer ? { defer: options.defer } : {}) })
   return { service, messages, values, failVisitor: value => { failVisitor = value }, failOwner: value => { failOwner = value } }
 }
 
@@ -113,4 +114,35 @@ test('SMTP authentication failure is not mistaken for a nonexistent mailbox or s
   const result = await service.request({ email: 'visitor@outlook.com' }, 'ip')
   assert.equal(result.status, 503)
   assert.doesNotMatch(JSON.stringify(result.body), /secret|does not exist|delivered/)
+})
+
+
+test('resume and status responses do not wait for a stalled owner notification', async () => {
+  const tasks = []
+  let releaseOwner, markOwnerStarted
+  const blockedOwner = new Promise(resolve => { releaseOwner = resolve })
+  const ownerStarted = new Promise(resolve => { markOwnerStarted = resolve })
+  const f = fixture({
+    defer: task => { tasks.push(Promise.resolve().then(task)) },
+    beforeOwner: () => { markOwnerStarted(); return blockedOwner },
+  })
+  let timeout
+  try {
+    const result = await Promise.race([
+      f.service.request({ email: 'visitor@outlook.com' }, 'ip'),
+      new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Visitor response blocked on owner email')), 1000) }),
+    ])
+    assert.equal(result.status, 202)
+    assert.equal(result.body.status, 'submitted')
+    await ownerStarted
+    assert.equal(f.messages.length, 1, 'PDF was sent while the owner notification is still waiting')
+    const status = await f.service.status({ token: result.body.token })
+    assert.equal(status.body.status, 'submitted')
+    assert.equal(status.body.notificationPending, true)
+  } finally {
+    clearTimeout(timeout)
+    releaseOwner()
+    await Promise.all(tasks)
+  }
+  assert.equal(f.messages.length, 2)
 })

@@ -1,3 +1,4 @@
+import { deferTask } from '../server/background.js'
 import { createResumeService } from '../server/resume-service.js'
 import { readBody, respond } from '../server/http.js'
 export const config = { api: { bodyParser: false } }
@@ -15,6 +16,6 @@ export default async function handler(req, res) {
   try { body = JSON.parse(await readBody(req)) }
   catch { return respond(res, 400, { error: 'Invalid request.' }) }
   const ip = process.env.VERCEL ? String(req.headers['x-vercel-forwarded-for'] || req.headers['x-forwarded-for'] || '').split(',')[0].trim() : req.socket?.remoteAddress || 'local'
-  const result = await createResumeService().request(body, ip)
+  const result = await createResumeService({ defer: deferTask }).request(body, ip)
   return respond(res, result.status, result.body)
 }

@@ -44,7 +44,7 @@ export function notificationText(email, timestamp) {
   return `Visitor Email: ${email}\nDate: ${day}\nTime: ${time} IST\nStatus: Resume successfully delivered.`
 }
 
-export function createResumeService({ env = process.env, fetcher = fetch, gmailSend, checkDomain = emailDomainStatus, loadPdf = () => readFile(new URL('../private/Nilesh_Metakota_2026.pdf', import.meta.url)) } = {}) {
+export function createResumeService({ env = process.env, fetcher = fetch, gmailSend, defer = task => task(), checkDomain = emailDomainStatus, loadPdf = () => readFile(new URL('../private/Nilesh_Metakota_2026.pdf', import.meta.url)) } = {}) {
   const provider = env.RESUME_EMAIL_PROVIDER || 'resend'
   const usingGmail = provider === 'gmail'
   let smtpSend = gmailSend
@@ -141,13 +141,17 @@ export function createResumeService({ env = process.env, fetcher = fetch, gmailS
         if (usingGmail) {
           // No delivery webhook is available: do not label SMTP acceptance as delivered.
           let notificationPending = true
-          try {
-            await redis(['SET', `resume:status:${token}`, 'submitted', 'EX', '86400'])
-            await redis(['SET', `resume:gmail-notification:${token}`, JSON.stringify({ email, timestamp: new Date().toISOString() }), 'EX', '86400'])
-            notificationPending = !await notifyGmailOwner(token)
-          } catch {
-            console.error('[resume-mail] Gmail accepted the resume but follow-up storage is unavailable.')
-          }
+          const timestamp = new Date().toISOString()
+          await defer(async () => {
+            try {
+              await redis(['SET', `resume:status:${token}`, 'submitted', 'EX', '86400'])
+              await redis(['SET', `resume:gmail-notification:${token}`, JSON.stringify({ email, timestamp }), 'EX', '86400'])
+              notificationPending = !await notifyGmailOwner(token)
+              if (notificationPending) notificationPending = !await notifyGmailOwner(token)
+            } catch {
+              console.error('[resume-mail] Gmail accepted the resume but follow-up storage is unavailable.')
+            }
+          })
           return reply(202, { token, status: 'submitted', notificationPending, message: 'Your resume email has been sent through Gmail. Please check your inbox and spam folder.' })
         }
         return reply(202, { token, message: 'Your resume email has been queued. Check your inbox and spam folder shortly.' })
@@ -167,7 +171,8 @@ export function createResumeService({ env = process.env, fetcher = fetch, gmailS
         const status = await redis(['GET', `resume:status:${body.token}`])
         if (!status) return reply(404, { error: 'This delivery check has expired. Please check your inbox or submit a new request.' })
         if (usingGmail && status === 'submitted') {
-          return reply(200, { status, notificationPending: !await notifyGmailOwner(body.token) })
+          await defer(() => notifyGmailOwner(body.token))
+          return reply(200, { status, notificationPending: Boolean(await redis(['GET', `resume:gmail-notification:${body.token}`])) })
         }
         return reply(200, { status })
       } catch { return reply(503, { error: 'Unable to check delivery right now. Please try again shortly.' }) }
